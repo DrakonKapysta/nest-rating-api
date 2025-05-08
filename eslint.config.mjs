@@ -33,6 +33,7 @@ export default tseslint.config(
 			'@typescript-eslint/no-unsafe-argument': 'warn',
 			'@typescript-eslint/explicit-function-return-type': 'warn',
 			'@typescript-eslint/require-await': 'off',
+			'@typescript-eslint/no-unsafe-call': 'off',
 
 			'prettier/prettier': [
 				'error',
