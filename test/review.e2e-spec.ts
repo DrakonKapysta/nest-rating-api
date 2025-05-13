@@ -25,6 +25,7 @@ const testDTO: CreateReviewDto = {
 describe('AppController (e2e)', () => {
 	let app: INestApplication<App>;
 	let createdId: string;
+	let token: string;
 
 	beforeEach(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -33,6 +34,13 @@ describe('AppController (e2e)', () => {
 
 		app = moduleFixture.createNestApplication();
 		await app.init();
+
+		const res = await request(app.getHttpServer()).post('/auth/login').send({
+			login: 'test',
+			password: '123',
+		});
+		const body = res.body as { access_token: string };
+		token = body.access_token;
 	});
 
 	afterAll(async () => {
@@ -52,7 +60,6 @@ describe('AppController (e2e)', () => {
 			.post('/review/create')
 			.send({ ...testDTO, rating: 6 })
 			.expect(400);
-		console.log(res.body);
 	});
 
 	it('/review/byProduct/:productId (GET) - success', async () => {
@@ -74,12 +81,14 @@ describe('AppController (e2e)', () => {
 	it('/review/:id (DELETE) - success', async () => {
 		await request(app.getHttpServer())
 			.delete('/review/' + createdId)
+			.set('Authorization', 'Bearer ' + token)
 			.expect(200);
 	});
 
 	it('/review/:id (DELETE) - fail', async () => {
 		await request(app.getHttpServer())
 			.delete('/review/' + new Types.ObjectId().toString())
+			.set('Authorization', 'Bearer ' + token)
 			.expect(404, {
 				statusCode: 404,
 				message: REVIEW_NOT_FOUND,
