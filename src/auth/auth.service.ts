@@ -1,4 +1,11 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+	BadRequestException,
+	HttpException,
+	HttpStatus,
+	Injectable,
+	NotFoundException,
+	UnauthorizedException,
+} from '@nestjs/common';
 import { AuthDto } from './dto/auth.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { UserModel } from './user.model';
@@ -30,16 +37,16 @@ export class AuthService {
 
 	async validateUser(email: string, password: string): Promise<Pick<UserModel, '_id' | 'email'>> {
 		const user = await this.findUser(email);
-		if (!user) throw new HttpException(USER_NOT_FOUND_ERROR, HttpStatus.NOT_FOUND);
+		if (!user) throw new NotFoundException(USER_NOT_FOUND_ERROR);
 
 		const isCorrectPassword = await compare(password, user.passwordHash);
 
-		if (!isCorrectPassword) throw new HttpException(WRONG_PASSWORD_ERROR, HttpStatus.NOT_FOUND);
+		if (!isCorrectPassword) throw new UnauthorizedException(WRONG_PASSWORD_ERROR);
 
 		return { _id: user._id, email: user.email };
 	}
 
-	async login(id: string, email: string) {
+	async login(id: string, email: string): Promise<{ access_token: string }> {
 		const payload = { id, email };
 		return {
 			access_token: await this.jwtService.signAsync(payload),
