@@ -24,22 +24,19 @@ export class ProductModel {
 	price: number;
 
 	@Prop()
-	oldPrice: number;
+	oldPrice?: number;
 
 	@Prop()
 	credit: number;
 
 	@Prop()
-	calculatedRating: number;
-
-	@Prop()
 	description: string;
 
-	@Prop([String])
-	advantages: string[];
+	@Prop()
+	advantages: string;
 
-	@Prop([String])
-	disadvantages: string[];
+	@Prop()
+	disadvantages: string;
 
 	@Prop([String])
 	categories: string[];
