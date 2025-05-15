@@ -56,3 +56,5 @@ export type TopPageDocumentOverride = {
 export type TopPageDocument = HydratedDocument<TopPageModel, TopPageDocumentOverride>;
 
 export const TopPageSchema = SchemaFactory.createForClass(TopPageModel);
+
+TopPageSchema.index({ title: 'text', tagsTitle: 'text', 'advantages.title': 'text' });
